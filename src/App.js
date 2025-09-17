@@ -318,7 +318,7 @@ const App = () => {
       return <MeetingsView meetings={meetings} onSelectMeeting={handleSelectMeeting} onAddMeeting={() => setShowAddMeetingModal(true)} onDeleteMeeting={handleDeleteMeeting} />;
     }
     if (currentPage === 'registerAttendance') {
-      return <RegisterAttendanceView meetings={meetings} people={people} onUpdateMeetingAttendance={handleUpdateMeetingAttendance} groups={groups} />;
+      return <RegisterAttendanceView meetings={meetings} people={people} onUpdateMeetingAttendance={handleMeetingAttendanceChange} groups={groups} />;
     }
     if (currentPage === 'deletedHistory') {
       return <DeletedPeopleHistoryView deletedPeople={deletedPeople} groups={groups} />;
