@@ -25,9 +25,26 @@ router.get('/:id', async (req, res) => {
 
 // Actualizar una reunión
 router.put('/:id', async (req, res) => {
-  const meeting = await Meeting.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  if (!meeting) return res.status(404).json({ error: 'No encontrado' });
-  res.json(meeting);
+  try {
+    const { attendance, ...rest } = req.body;
+    const meeting = await Meeting.findById(req.params.id);
+    if (!meeting) return res.status(404).json({ error: 'No encontrado' });
+
+    if (attendance && Array.isArray(attendance)) {
+      meeting.attendance = attendance.map(record => ({
+        personId: String(record.personId),
+        status: record.status || 'Inasistió',
+        excuse: record.excuse || ''
+      }));
+    }
+
+    Object.assign(meeting, rest);
+    await meeting.save();
+    res.json(meeting);
+  } catch (error) {
+    console.error("Error actualizando reunión:", error);
+    res.status(500).json({ error: 'Error actualizando reunión', details: error.message });
+  }
 });
 
 // Eliminar una reunión

@@ -1,4 +1,8 @@
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? '/api'
+    : 'http://localhost:4000/api');
 
 // Función para obtener el token del localStorage
 const getToken = () => localStorage.getItem('leaderToken');

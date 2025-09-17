@@ -33,17 +33,22 @@ const RegisterAttendanceView = ({ meetings, people, onUpdateMeetingAttendance, o
     );
   };
 
-  const handleSaveAttendance = () => {
+  const handleSaveAttendance = async () => {
     if (selectedMeetingId) {
       const attendanceToSave = currentMeetingAttendance.map(person => ({
         personId: person._id || person.id,
         status: person.status,
         excuse: person.excuse
       }));
-      onUpdateMeetingAttendance(selectedMeetingId, attendanceToSave);
-      alert('Asistencia guardada con éxito!');
-      if (typeof onBack === 'function') {
-        onBack();
+      try {
+        await onUpdateMeetingAttendance(selectedMeetingId, attendanceToSave);
+        alert('Asistencia guardada con éxito!');
+        if (typeof onBack === 'function') {
+          onBack();
+        }
+      } catch (error) {
+        console.error("Error actualizando asistencia:", error);
+        alert('Error al guardar la asistencia. Revisa la consola para más detalles.');
       }
     }
   };

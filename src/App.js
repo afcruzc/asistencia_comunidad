@@ -229,18 +229,11 @@ const App = () => {
     ));
   };
 
-  const handleMeetingAttendanceChange = async (meetingId, personId, newStatus, excuse = '') => {
-    const meeting = meetings.find(m => m.id === meetingId);
-    const updatedAttendance = meeting.attendance.map(att =>
-      att.personId === personId ? { ...att, status: newStatus, excuse: newStatus === 'Excusa' ? excuse : '' } : att
-    );
-    if (!updatedAttendance.some(att => att.personId === personId)) {
-      updatedAttendance.push({ personId: personId, status: newStatus, excuse: newStatus === 'Excusa' ? excuse : '' });
-    }
+  const handleMeetingAttendanceChange = async (meetingId, newAttendanceRecords) => {
     try {
-      await updateMeeting(meetingId, { attendance: updatedAttendance });
+      await updateMeeting(meetingId, { attendance: newAttendanceRecords });
       setMeetings(meetings.map(m =>
-        m.id === meetingId ? { ...m, attendance: updatedAttendance } : m
+        m.id === meetingId ? { ...m, attendance: newAttendanceRecords } : m
       ));
     } catch (error) {
       console.error('Error updating attendance:', error);
