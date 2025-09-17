@@ -68,7 +68,11 @@ const GroupDetailView = ({ group, people, meetings, onStatusChange, onAddPerson,
         <GroupDashboardView
           group={group}
           people={peopleInGroup}
-          meetings={meetings}
+          meetings={meetings.filter(meeting =>
+            meeting.attendance.some(att =>
+              peopleInGroup.some(person => att.personId === person.id || att.personId === person._id)
+            )
+          )}
         />
       )}
     </div>
