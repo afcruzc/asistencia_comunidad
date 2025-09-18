@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Obtener todas las personas
 router.get('/', async (req, res) => {
-  const people = await Person.find().populate('groupIds');
+  const people = await Person.find();
   res.json(people);
 });
 
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 
 // Obtener una persona por ID
 router.get('/:id', async (req, res) => {
-  const person = await Person.findById(req.params.id).populate('groupIds');
+  const person = await Person.findById(req.params.id);
   if (!person) return res.status(404).json({ error: 'No encontrado' });
   res.json(person);
 });

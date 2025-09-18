@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const GroupDashboardView = ({ group, people, meetings }) => {
+const GroupDashboardView = ({ group, people, meetings, groups }) => {
   const [selectedMeetingId, setSelectedMeetingId] = useState('');
 
   const formatDate = (dateString) => {

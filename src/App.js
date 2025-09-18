@@ -317,7 +317,7 @@ const App = () => {
       return <DeletedPeopleHistoryView deletedPeople={deletedPeople} groups={groups} />;
     }
     if (currentPage === 'groupDetail' && selectedGroup) {
-      return <GroupDetailView group={selectedGroup} people={people} meetings={meetings} onStatusChange={handlePersonStatusChange} onAddPerson={() => setShowPersonModal(true)} onSelectPerson={handleSelectPerson} onEditPerson={handleEditPerson} onDeletePerson={handleDeletePerson} />;
+      return <GroupDetailView group={selectedGroup} people={people} meetings={meetings} groups={groups} onStatusChange={handlePersonStatusChange} onAddPerson={() => setShowPersonModal(true)} onSelectPerson={handleSelectPerson} onEditPerson={handleEditPerson} onDeletePerson={handleDeletePerson} />;
     }
     if (currentPage === 'personDashboard' && selectedPerson) {
       return <PersonDashboardView person={selectedPerson} meetings={meetings} groups={groups} />;

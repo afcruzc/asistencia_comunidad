@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PersonCard from './PersonCard';
 import GroupDashboardView from './GroupDashboardView';
 
-const GroupDetailView = ({ group, people, meetings, onStatusChange, onAddPerson, onSelectPerson, onEditPerson, onDeletePerson }) => {
+const GroupDetailView = ({ group, people, meetings, groups, onStatusChange, onAddPerson, onSelectPerson, onEditPerson, onDeletePerson }) => {
   const [subPage, setSubPage] = useState('people');
   const [peopleInGroup, setPeopleInGroup] = useState([]);
 
   useEffect(() => {
     // Filtrar personas que tienen el groupId de este grupo
-    const filtered = people.filter(person => person.groupIds && person.groupIds.includes(group.id));
+    const filtered = people.filter(person => person.groupIds && person.groupIds.some(id => id == group.id));
     setPeopleInGroup(filtered);
   }, [people, group]); // Dependencias: people y group
 
@@ -68,11 +68,8 @@ const GroupDetailView = ({ group, people, meetings, onStatusChange, onAddPerson,
         <GroupDashboardView
           group={group}
           people={peopleInGroup}
-          meetings={meetings.filter(meeting =>
-            meeting.attendance.some(att =>
-              peopleInGroup.some(person => att.personId === person.id || att.personId === person._id)
-            )
-          )}
+          meetings={meetings}
+          groups={groups}
         />
       )}
     </div>

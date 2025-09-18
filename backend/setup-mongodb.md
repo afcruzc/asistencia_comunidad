@@ -75,3 +75,5 @@ En lugar del error de MongoDB.
 - Verifica que la cadena de conexión sea correcta
 - Asegúrate de que el cluster esté activo en MongoDB Atlas
 
+
+
