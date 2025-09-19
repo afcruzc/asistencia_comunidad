@@ -7,6 +7,7 @@ const HamburgerMenu = ({ isOpen, onClose, onNavigate, currentPage, isLeaderAuthe
     { id: 'meetings', label: 'Reuniones', icon: '📅' },
     { id: 'registerAttendance', label: 'Registrar Asistencia', icon: '✅' },
     { id: 'deletedHistory', label: 'Historial de Eliminados', icon: '🗑️' },
+    { id: 'admin', label: 'Administración', icon: '⚙️' },
     { id: 'backend-test', label: 'Prueba Backend', icon: '🔗' },
   ];
 

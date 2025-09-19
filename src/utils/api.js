@@ -52,6 +52,19 @@ export function getLeaderData() {
   return data ? JSON.parse(data) : null;
 }
 
+export async function registerLeader(data) {
+  const res = await fetch(`${API_URL}/leaders/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error registrando líder');
+  }
+  return res.json();
+}
+
 // PERSONAS
 export async function getPersons() {
   const res = await fetch(`${API_URL}/persons`);

@@ -16,7 +16,7 @@ import AdminLoginModal from './components/AdminLoginModal';
 import LeaderLoginModal from './components/LeaderLoginModal';
 import HamburgerMenu from './components/HamburgerMenu';
 import BackendConnectionTest from './components/BackendConnectionTest';
-import { getPersons, createPerson, updatePerson, deletePerson, getMeetings, createMeeting, updateMeeting, deleteMeeting, getDeletedPersons, createDeletedPerson, isLeaderLoggedIn, getLeaderData, leaderLogin, leaderLogout } from './utils/api';
+import { getPersons, createPerson, updatePerson, deletePerson, getMeetings, createMeeting, updateMeeting, deleteMeeting, getDeletedPersons, createDeletedPerson, isLeaderLoggedIn, getLeaderData, leaderLogin, leaderLogout, registerLeader } from './utils/api';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('groups');
@@ -296,6 +296,15 @@ const App = () => {
     setCurrentLeader(null);
   };
 
+  const handleRegisterLeader = async (leaderData) => {
+    try {
+      await registerLeader(leaderData);
+      alert('Líder registrado exitosamente');
+    } catch (error) {
+      alert('Error registrando líder: ' + error.message);
+    }
+  };
+
   const getTitle = () => {
     if (currentPage === 'groups') return 'Asistencia ICC Luz a las Naciones';
     if (currentPage === 'people') return 'Gestión de Personas';
@@ -345,6 +354,9 @@ const App = () => {
     if (currentPage === 'meetingDetail' && selectedMeeting) {
       return <MeetingDetailView meeting={selectedMeeting} people={people} groups={groups} onStatusChange={handleMeetingAttendanceChange} onEditPerson={handleEditPerson} />;
     }
+    if (currentPage === 'admin') {
+      return <AdminView onClearAllData={handleClearAllData} onRegisterLeader={handleRegisterLeader} groups={groups} />;
+    }
     return <div>Página no encontrada</div>;
   };
 
@@ -385,7 +397,17 @@ const App = () => {
         <HamburgerMenu
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
-          onNavigate={setCurrentPage}
+          onNavigate={(page) => {
+            if (page === 'admin') {
+              if (isAdminAuthenticated) {
+                setCurrentPage('admin');
+              } else {
+                setShowAdminLoginModal(true);
+              }
+            } else {
+              setCurrentPage(page);
+            }
+          }}
           currentPage={currentPage}
           isLeaderAuthenticated={isLeaderAuthenticated}
           showSidebar={showSidebar}
