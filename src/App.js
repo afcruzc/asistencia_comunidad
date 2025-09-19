@@ -13,9 +13,10 @@ import RegisterAttendanceView from './components/RegisterAttendanceView';
 import DeletedPeopleHistoryView from './components/DeletedPeopleHistoryView';
 import AdminView from './components/AdminView';
 import AdminLoginModal from './components/AdminLoginModal';
+import LeaderLoginModal from './components/LeaderLoginModal';
 import HamburgerMenu from './components/HamburgerMenu';
 import BackendConnectionTest from './components/BackendConnectionTest';
-import { getPersons, createPerson, updatePerson, deletePerson, getMeetings, createMeeting, updateMeeting, deleteMeeting, getDeletedPersons, createDeletedPerson } from './utils/api';
+import { getPersons, createPerson, updatePerson, deletePerson, getMeetings, createMeeting, updateMeeting, deleteMeeting, getDeletedPersons, createDeletedPerson, isLeaderLoggedIn, getLeaderData, leaderLogin, leaderLogout } from './utils/api';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('groups');
@@ -28,8 +29,9 @@ const App = () => {
   const [personToEdit, setPersonToEdit] = useState(null);
   const [showAddMeetingModal, setShowAddMeetingModal] = useState(false);
   const [showAdminLoginModal, setShowAdminLoginModal] = useState(false);
+  const [showLeaderLoginModal, setShowLeaderLoginModal] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [isLeaderAuthenticated, setIsLeaderAuthenticated] = useState(true); // Estado para autenticación de líder
+  const [isLeaderAuthenticated, setIsLeaderAuthenticated] = useState(false); // Estado para autenticación de líder
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true); // Nuevo estado para el menú lateral
   const [currentLeader, setCurrentLeader] = useState(null); // Estado para el líder actual
@@ -54,6 +56,12 @@ const App = () => {
   const [groups, setGroups] = useState(staticGroups);
 
   useEffect(() => {
+    // Check if leader is logged in
+    if (isLeaderLoggedIn()) {
+      setIsLeaderAuthenticated(true);
+      setCurrentLeader(getLeaderData());
+    }
+
     const fetchData = async () => {
       try {
         const fetchedPeople = await getPersons();
@@ -76,8 +84,10 @@ const App = () => {
         console.error('Error fetching data:', error);
       }
     };
-    fetchData();
-  }, []);
+    if (isLeaderAuthenticated) {
+      fetchData();
+    }
+  }, [isLeaderAuthenticated]);
 
   const handleSelectGroup = (group) => {
     setSelectedGroup(group);
@@ -270,10 +280,20 @@ const App = () => {
     return false;
   };
 
+  const handleLeaderLogin = async (email, password) => {
+    try {
+      const data = await leaderLogin(email, password);
+      setIsLeaderAuthenticated(true);
+      setCurrentLeader(data.leader);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const handleLeaderLogout = () => {
+    leaderLogout();
     setIsLeaderAuthenticated(false);
     setCurrentLeader(null);
-    // Puedes limpiar datos del líder en localStorage si lo deseas
   };
 
   const getTitle = () => {
@@ -328,35 +348,53 @@ const App = () => {
     return <div>Página no encontrada</div>;
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {isLeaderAuthenticated && (
-        <LayoutHeader
-          title={getTitle()}
-          onBack={handleBack}
-          showBack={currentPage !== 'groups' && currentPage !== 'people' && currentPage !== 'meetings'}
-          onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
-          currentLeader={currentLeader}
-          onLeaderLogout={handleLeaderLogout}
-        />
-      )}
-
-      <div className="flex">
-        {isLeaderAuthenticated && (
-          <HamburgerMenu
-            isOpen={isMenuOpen}
-            onClose={() => setIsMenuOpen(false)}
-            onNavigate={setCurrentPage}
-            currentPage={currentPage}
-            isLeaderAuthenticated={isLeaderAuthenticated}
-            showSidebar={showSidebar} // Nuevo prop
-            onToggleSidebar={() => setShowSidebar(!showSidebar)} // Nuevo prop
+  if (!isLeaderAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">Asistencia ICC Luz a las Naciones</h1>
+          <button
+            onClick={() => setShowLeaderLoginModal(true)}
+            className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-semibold text-lg"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
+        {showLeaderLoginModal && (
+          <LeaderLoginModal
+            onClose={() => setShowLeaderLoginModal(false)}
+            onLogin={handleLeaderLogin}
           />
         )}
+      </div>
+    );
+  }
 
-        <main className={`flex-1 p-6 transition-all duration-300 ${isLeaderAuthenticated && showSidebar ? 'md:ml-64' : ''}`}>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <LayoutHeader
+        title={getTitle()}
+        onBack={handleBack}
+        showBack={currentPage !== 'groups' && currentPage !== 'people' && currentPage !== 'meetings'}
+        onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
+        currentLeader={currentLeader}
+        onLeaderLogout={handleLeaderLogout}
+      />
+
+      <div className="flex">
+        <HamburgerMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          onNavigate={setCurrentPage}
+          currentPage={currentPage}
+          isLeaderAuthenticated={isLeaderAuthenticated}
+          showSidebar={showSidebar}
+          onToggleSidebar={() => setShowSidebar(!showSidebar)}
+        />
+
+        <main className={`flex-1 p-6 transition-all duration-300 ${showSidebar ? 'md:ml-64' : ''}`}>
           {/* Botón para mostrar el menú lateral si está oculto (solo escritorio) */}
-          {isLeaderAuthenticated && !showSidebar && (
+          {!showSidebar && (
             <button
               className="hidden md:block fixed top-24 left-2 z-40 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
               onClick={() => setShowSidebar(true)}
