@@ -16,7 +16,7 @@ const GroupDashboardView = ({ group, people, meetings, groups }) => {
       return { Asistió: 0, Excusa: 0, Inasistió: 0, total: 0 };
     }
 
-    const meeting = meetings.find(m => m.id === parseInt(selectedMeetingId));
+    const meeting = meetings.find(m => m.id === selectedMeetingId);
     if (!meeting) {
       return { Asistió: 0, Excusa: 0, Inasistió: 0, total: 0 };
     }
@@ -62,7 +62,7 @@ const GroupDashboardView = ({ group, people, meetings, groups }) => {
       return;
     }
 
-    const meeting = meetings.find(m => m.id === parseInt(selectedMeetingId));
+    const meeting = meetings.find(m => m.id === selectedMeetingId);
     if (!meeting) {
       alert('Reunión no encontrada.');
       return;
@@ -140,7 +140,7 @@ const GroupDashboardView = ({ group, people, meetings, groups }) => {
 
       {selectedMeetingId && (
         <div className="bg-white p-6 rounded-2xl shadow-lg">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Resumen de Asistencia para "{meetings.find(m => m.id === parseInt(selectedMeetingId))?.name}"</h4>
+          <h4 className="text-lg font-semibold text-gray-800 mb-4">Resumen de Asistencia para "{meetings.find(m => m.id === selectedMeetingId)?.name}"</h4>
           <p className="text-gray-600 mb-6">Total de personas en el grupo: {totalParticipants}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

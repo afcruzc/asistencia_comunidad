@@ -8,7 +8,7 @@ const GroupDetailView = ({ group, people, meetings, groups, onStatusChange, onAd
 
   useEffect(() => {
     // Filtrar personas que tienen el groupId de este grupo
-    const filtered = people.filter(person => person.groupIds && person.groupIds.some(id => id == group.id));
+    const filtered = people.filter(person => person.groupIds && person.groupIds.some(id => String(id) === String(group.id)));
     setPeopleInGroup(filtered);
   }, [people, group]); // Dependencias: people y group
 
